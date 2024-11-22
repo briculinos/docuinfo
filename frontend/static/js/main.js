@@ -1,3 +1,4 @@
+const backendURL = "https://docuinfo-backend-inqsvdp9h-bogdantds-projects.vercel.app"
 // File upload and preview functionality
 function uploadFile() {
     const fileInput = document.getElementById('documentFile');
@@ -15,7 +16,7 @@ function uploadFile() {
     const formData = new FormData();
     formData.append('file', file);
 
-    fetch('/api/upload', {
+    fetch('/upload', {
         method: 'POST',
         body: formData
     })
@@ -26,12 +27,10 @@ function uploadFile() {
         return response.json();
     })
     .then(data => {
-        console.log('Upload response:', data);
         if (data.error) {
             throw new Error(data.error);
         }
-        // Update the UI with a success message
-        preview.innerHTML = `<p>${data.message}</p>`;
+        // After successful upload, show the preview
         showPdfPreview(file);
     })
     .catch(error => {
@@ -57,6 +56,7 @@ function showPdfPreview(file) {
         preview.innerHTML = '<p>Please select a PDF file</p>';
     }
 }
+
 // Remove the change event listener that was showing preview on selection
 // Only show preview after successful upload
 document.getElementById('documentFile').addEventListener('change', function(event) {
@@ -81,7 +81,7 @@ async function askQuestion() {
     `;
     
     try {
-        const result = await fetch('/api/ask', {
+        const result = await fetch('/ask', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -186,4 +186,3 @@ document.getElementById('question').addEventListener('keypress', function(e) {
         askQuestion();
     }
 });
-
