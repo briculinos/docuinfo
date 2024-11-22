@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Documentation Query Interface</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
 </head>
 <body>
     <div class="container"></div>
@@ -29,7 +29,7 @@
         </div>
     </div>
     
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="/static/js/main.js" defer></script>
     <script>
     document.getElementById('uploadForm').addEventListener('submit', async (e) => {
         e.preventDefault();
