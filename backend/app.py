@@ -5,9 +5,10 @@ import os
 from PyPDF2 import PdfReader  # Corrected import statement
 from dotenv import load_dotenv
 from openai import OpenAI
+import os
 
+app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 
-app = Flask(__name__, template_folder='../frontend', static_folder='../frontend/static')
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -51,6 +52,8 @@ def encode_sentences(sentences):
     )
     embeddings = [item.embedding for item in response.data]
     return embeddings
+print(f"Current working directory: {os.getcwd()}")
+print(f"Templates folder absolute path: {os.path.abspath('templates')}")
 
 
 # Global variables to store documents and embeddings
@@ -60,7 +63,6 @@ document_embeddings = []
 @app.route('/')
 def home():
     return render_template('index.html')
-
 
 @app.route('/api/ask', methods=['POST'])
 def ask():
