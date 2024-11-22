@@ -1,0 +1,28 @@
+# Ignore Python virtual environments
+venv/
+clean/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+*.so
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore environment files with sensitive information
+*.env
+openai.env
+
+# Ignore any logs or temporary files
+*.log
+*.tmp
+
+# Ignore Vercel build output (optional if it exists in project)
+.vercel
+
+# Ignore uploaded files in backend
+backend/uploads/
+uploads/

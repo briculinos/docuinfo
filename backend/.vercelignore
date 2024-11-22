@@ -1,0 +1,21 @@
+# Ignore Python cache and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+clean/
+venv/
+.virtualenv/
+*.egg-info/
+
+# Ignore large data or test files
+data/
+tests/
+docs/
+logs/
+
+# Ignore other unnecessary files
+.DS_Store
+*.log
+*.tmp

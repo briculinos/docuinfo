@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Documentation Query Interface</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container"></div>
+        <h1>Documentation Query Interface</h1>
+
+        <div class="query-section">
+            <div class="left-panel">
+                <input type="file" id="documentFile" accept=".pdf">
+                <button onclick="uploadFile()" class="upload-btn">Upload Doc</button>
+                
+                <div id="pdfPreview" class="pdf-preview">
+                    <p>Picture of First Page</p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <textarea id="question" placeholder="Enter your question here..."></textarea>
+                <button id="askButton">Ask</button>
+            </div>
+        </div>
+
+        <div class="response-container">
+            <div id="response">Answer will appear here</div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        const fileInput = document.getElementById('documentFile');
+        formData.append('file', fileInput.files[0]);
+
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert('Documentation uploaded successfully!');
+                // Display first page preview
+                const firstPagePreview = document.getElementById('firstPagePreview');
+                firstPagePreview.src = result.first_page_url; // assuming API returns this
+                firstPagePreview.style.display = 'block';
+            } else {
+                alert('Error: ' + result.error);
+            }
+        } catch (error) {
+            alert('Error uploading file: ' + error);
+        }
+    });
+    </script>
+</body>
+</html>
