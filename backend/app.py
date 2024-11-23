@@ -14,9 +14,9 @@ CORS(app)
 #app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+UPLOAD_FOLDER = '/tmp/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {'pdf', 'txt', 'doc', 'docx'}
 
