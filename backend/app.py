@@ -6,8 +6,12 @@ from PyPDF2 import PdfReader  # Corrected import statement
 from dotenv import load_dotenv
 from openai import OpenAI
 import os
+from flask_cors import CORS
 
 app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
+CORS(app)
+
+#app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
