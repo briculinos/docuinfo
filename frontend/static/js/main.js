@@ -1,4 +1,5 @@
-const backendURL = "https://docuinfo-backend-inqsvdp9h-bogdantds-projects.vercel.app"
+const backendURL = "https://docuinfo-backend.vercel.app";
+
 // File upload and preview functionality
 function uploadFile() {
     const fileInput = document.getElementById('documentFile');
@@ -16,7 +17,7 @@ function uploadFile() {
     const formData = new FormData();
     formData.append('file', file);
 
-    fetch('/upload', {
+    fetch(`${backendURL}/api/upload`, { // Updated to point to the backend API
         method: 'POST',
         body: formData
     })
@@ -32,6 +33,7 @@ function uploadFile() {
         }
         // After successful upload, show the preview
         showPdfPreview(file);
+        preview.innerHTML = `<p>${data.message}</p>`;
     })
     .catch(error => {
         console.error('Error:', error);
@@ -81,7 +83,7 @@ async function askQuestion() {
     `;
     
     try {
-        const result = await fetch('/ask', {
+        const result = await fetch(`${backendURL}/api/ask`, { // Updated to point to the backend API
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -114,6 +116,7 @@ async function askQuestion() {
         response.innerHTML = 'Error: ' + error.message;
     }
 }
+
 function formatJsonResponse(answer, responseElement) {
     try {
         let cleanAnswer = answer.replace(/```json\n|\n```/g, '');
