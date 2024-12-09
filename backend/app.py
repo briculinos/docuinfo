@@ -5,14 +5,10 @@ import os
 from PyPDF2 import PdfReader  # Corrected import statement
 from dotenv import load_dotenv
 from openai import OpenAI
-import os
 from flask_cors import CORS
 
 app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 CORS(app)
-
-#app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
-
 
 UPLOAD_FOLDER = '/tmp/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -56,7 +52,14 @@ def encode_sentences(sentences):
     )
     embeddings = [item.embedding for item in response.data]
     return embeddings
-print(f"Current working directory: {os.getcwd()}")
+
+try:
+    current_directory = os.getcwd()
+    print(f"Current working directory: {current_directory}")
+except PermissionError as e:
+    print(f"PermissionError: {e}. Unable to access the current working directory.")
+    # Handle the error, e.g., by setting a default directory or exiting the script
+
 print(f"Templates folder absolute path: {os.path.abspath('templates')}")
 
 
@@ -155,7 +158,7 @@ def upload_file():
             documents = read_pdf(file_path)
             contents = [doc['content'] for doc in documents]
             document_embeddings = encode_sentences(contents)
-            return jsonify({'message': 'File uploaded and processed successfully'}), 200
+            return jsonify({'message': 'File uploaded and processed successfully','file_url': file_path}), 200
         except Exception as e:
             # Print the exception for debugging purposes
             print(f"Error in /api/upload: {e}")

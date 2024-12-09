@@ -5,57 +5,93 @@
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 </head>
 <body>
-    <div class="container"></div>
+    <div class="container">
         <h1>Documentation Query Interface</h1>
 
         <div class="query-section">
-            <div class="left-panel">
+            <div class="left-panel" style="flex: 1;">
+                <!-- File input for uploading the PDF -->
                 <input type="file" id="documentFile" accept=".pdf">
                 <button onclick="uploadFile()" class="upload-btn">Upload Doc</button>
-                
+
+                <!-- PDF preview area using an iframe -->
                 <div id="pdfPreview" class="pdf-preview">
-                    <p>Picture of First Page</p>
+                    <div id="uploadSpinner" class="spinner-container" style="display: none;">
+                        <div class="spinner"></div>
+                        <div class="spinner-text">Uploading...</div>
+                    </div>
+                    <iframe id="pdfViewer" width="100%" height="600px" style="border: none;"></iframe>
                 </div>
             </div>
 
-            <div class="input-group">
+            <div class="input-group" style="flex: 1;">
                 <textarea id="question" placeholder="Enter your question here..."></textarea>
                 <button id="askButton">Ask</button>
             </div>
         </div>
 
         <div class="response-container">
+            <div id="answerSpinner" class="spinner-container" style="display: none;">
+                <div class="spinner"></div>
+                <div class="spinner-text">Generating answer...</div>
+            </div>
             <div id="response">Answer will appear here</div>
         </div>
     </div>
-    
-    <script src="/static/js/main.js" defer></script>
-    <script>
-    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        const fileInput = document.getElementById('documentFile');
-        formData.append('file', fileInput.files[0]);
 
-        try {
-            const response = await fetch('/upload', {
+    <!-- Include your main JavaScript file if necessary -->
+    <script src="/static/js/main.js" defer></script>
+
+    <script>
+    // Event listener for the file input change event
+    document.getElementById('documentFile').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+
+    if (file && file.type === 'application/pdf') {
+        // Generate a temporary file URL
+        const fileURL = URL.createObjectURL(file);
+        console.log('Generated File URL:', fileURL); // Debugging: Check the file URL
+
+        // Set the iframe's src to the generated URL
+        const iframe = document.getElementById('pdfViewer');
+        iframe.src = fileURL;
+
+        // Debugging: Log iframe to confirm src is being set
+        console.log('Iframe src set to:', iframe.src);
+    } else {
+        alert('Please select a valid PDF file.');
+    }
+});
+
+    // Function to handle file upload to the server (if needed)
+    function uploadFile() {
+        const fileInput = document.getElementById('documentFile');
+        const file = fileInput.files[0];
+
+        if (file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload', {
                 method: 'POST',
                 body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('File uploaded successfully!');
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+                alert('Error uploading file: ' + error);
             });
-            const result = await response.json();
-            if (response.ok) {
-                alert('Documentation uploaded successfully!');
-                // Display first page preview
-                const firstPagePreview = document.getElementById('firstPagePreview');
-                firstPagePreview.src = result.first_page_url; // assuming API returns this
-                firstPagePreview.style.display = 'block';
-            } else {
-                alert('Error: ' + result.error);
-            }
-        } catch (error) {
-            alert('Error uploading file: ' + error);
+        } else {
+            alert('No file selected.');
         }
-    });
+    }
     </script>
 </body>
 </html>

@@ -1,23 +1,29 @@
-const backendURL = "https://docuinfo-backend.vercel.app";
-
+//const backendURL = "https://docuinfo-backend.vercel.app";
+//const backendURL = "https://127.0.0.1:5000";
 // File upload and preview functionality
 function uploadFile() {
     const fileInput = document.getElementById('documentFile');
     const file = fileInput.files[0];
-    const preview = document.getElementById('pdfPreview');
-    
+    //const preview = document.getElementById('pdfPreview');
+    const iframe = document.getElementById('pdfViewer');
+
     if (!file) {
         alert('Please select a file first');
         return;
     }
-
-    // Show loading state
-    preview.innerHTML = '<p>Uploading...</p>';
-
+    // Generate a local preview URL before uploading
+    const localPreviewUrl = URL.createObjectURL(file);
+    if (iframe) {
+        iframe.src = localPreviewUrl; // Set local preview
+    } else {
+        console.error('iframe not found');
+        return;
+    }
     const formData = new FormData();
     formData.append('file', file);
 
-    fetch(`${backendURL}/api/upload`, { // Updated to point to the backend API
+    fetch(`/api/upload`, { // Updated to point to the backend API
+    //fetch(`${backendURL}/api/upload`, { // Updated to point to the backend API
         method: 'POST',
         body: formData
     })
@@ -28,16 +34,22 @@ function uploadFile() {
         return response.json();
     })
     .then(data => {
+        console.log('Upload response:', data);
         if (data.error) {
             throw new Error(data.error);
         }
-        // After successful upload, show the preview
-        showPdfPreview(file);
-        preview.innerHTML = `<p>${data.message}</p>`;
+
+        // Keep the local preview visible
+        const preview = document.getElementById('pdfPreview');
+        if (preview) {
+            preview.innerHTML = ''; // Clear any messages
+            preview.appendChild(iframe); // Ensure iframe stays visible
+        }
+        alert(data.message); // Display success message
     })
     .catch(error => {
         console.error('Error:', error);
-        preview.innerHTML = `<p>Error: ${error.message}</p>`;
+        alert(`Error uploading file: ${error.message}`);
     });
 }
 
@@ -61,9 +73,23 @@ function showPdfPreview(file) {
 
 // Remove the change event listener that was showing preview on selection
 // Only show preview after successful upload
-document.getElementById('documentFile').addEventListener('change', function(event) {
-    const preview = document.getElementById('pdfPreview');
-    preview.innerHTML = '<p>Click Upload to process the file</p>';
+document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.getElementById('documentFile');
+    fileInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        const iframe = document.getElementById('pdfViewer');
+        
+        if (file && file.type === 'application/pdf') {
+            const fileURL = URL.createObjectURL(file);
+            if (iframe) {
+                iframe.src = fileURL; // Set initial preview
+            } else {
+                console.error('iframe not found');
+            }
+        } else {
+            alert('Please select a valid PDF file.');
+        }
+    });
 });
 
 // Question handling
@@ -83,7 +109,8 @@ async function askQuestion() {
     `;
     
     try {
-        const result = await fetch(`${backendURL}/api/ask`, { // Updated to point to the backend API
+        //const result = await fetch(`${backendURL}/api/ask`, { // Updated to point to the backend API
+        const result = await fetch(`/api/ask`, { // Updated to point to the backend API
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
