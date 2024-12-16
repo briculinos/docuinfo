@@ -11,9 +11,5 @@
       "src": "/(.*)",
       "dest": "backend/app.py"
     }
-  ],
-  "includeFiles": [
-    "frontend/templates/**/*",
-    "frontend/static/**/*"
   ]
 }
