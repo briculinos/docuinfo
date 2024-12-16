@@ -75,7 +75,12 @@ document_embeddings = []
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        # Print error to logs and return an error message
+        print(f"Error rendering index.html: {e}")
+        return f"Error: {e}", 500
 
 @app.route('/api/ask', methods=['POST'])
 def ask():
