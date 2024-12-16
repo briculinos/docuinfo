@@ -1,4 +1,4 @@
-//const backendURL = "https://docuinfo-backend.vercel.app";
+const backendURL = "https://docuinfo-backend.vercel.app";
 //const backendURL = "https://127.0.0.1:5000";
 // File upload and preview functionality
 function uploadFile() {
@@ -22,8 +22,8 @@ function uploadFile() {
     const formData = new FormData();
     formData.append('file', file);
 
-    fetch(`/api/upload`, { // Updated to point to the backend API
-    //fetch(`${backendURL}/api/upload`, { // Updated to point to the backend API
+    //fetch(`/api/upload`, { // Updated to point to the backend API
+    fetch(`${backendURL}/api/upload`, { // Updated to point to the backend API
         method: 'POST',
         body: formData
     })
@@ -109,8 +109,8 @@ async function askQuestion() {
     `;
     
     try {
-        //const result = await fetch(`${backendURL}/api/ask`, { // Updated to point to the backend API
-        const result = await fetch(`/api/ask`, { // Updated to point to the backend API
+        const result = await fetch(`${backendURL}/api/ask`, { // Updated to point to the backend API
+        //const result = await fetch(`/api/ask`, { // Updated to point to the backend API
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
