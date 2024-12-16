@@ -1,5 +1,5 @@
 import openai
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, Response
 from werkzeug.utils import secure_filename
 import os
 from PyPDF2 import PdfReader  # Corrected import statement
@@ -9,6 +9,9 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
+# Your credentials
+USERNAME = "briculinos"
+PASSWORD = "Documentation_ftw!"
 #CORS(app)
 CORS(app, resources={r"/*": {"origins": "https://docuinfo-frontend.vercel.app"}})
 
@@ -25,6 +28,17 @@ client = OpenAI(
   api_key=os.environ['OPENAI_API_KEY'],  # this is also the default, it can be omitted
 )
 
+def check_auth(username, password):
+    """Check if a username/password combination is valid."""
+    return username == USERNAME and password == PASSWORD
+
+def authenticate():
+    """Send a 401 response to trigger basic authentication."""
+    return Response(
+        'Could not verify your login!\n'
+        'You need to provide valid credentials.', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -70,6 +84,12 @@ print(f"Templates folder absolute path: {os.path.abspath('templates')}")
 documents = []
 document_embeddings = []
 
+@app.before_request
+def require_login():
+    auth = request.authorization
+    if not auth or not check_auth(auth.username, auth.password):
+        return authenticate()
+
 @app.route('/')
 def home():
     try:
@@ -77,6 +97,7 @@ def home():
     except Exception as e:
         print(f"Error rendering template: {e}")
         return f"Error: {e}", 500
+
 
 @app.route('/api/ask', methods=['POST'])
 def ask():
