@@ -8,7 +8,8 @@ from openai import OpenAI
 from flask_cors import CORS
 
 app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
-CORS(app)
+#CORS(app)
+CORS(app, resources={r"/*": {"origins": "https://docuinfo-frontend.vercel.app"}})
 
 UPLOAD_FOLDER = '/tmp/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
