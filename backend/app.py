@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from flask_cors import CORS
 
-app = Flask(
-    __name__,
-    template_folder=os.path.abspath('../frontend/templates'),
-    static_folder=os.path.abspath('../frontend/static')
-)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMPLATE_DIR = os.path.join(BASE_DIR, '../frontend/templates')
+STATIC_DIR = os.path.join(BASE_DIR, '../frontend/static')
+
+app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
 #CORS(app)
 CORS(app, resources={r"/*": {"origins": "https://docuinfo-frontend.vercel.app"}})
 
