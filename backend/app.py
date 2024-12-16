@@ -7,15 +7,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from flask_cors import CORS
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FRONTEND_DIR = os.path.join(BASE_DIR, '../frontend')
-
-# Resolve absolute paths for templates and static files
-TEMPLATE_DIR = os.path.join(FRONTEND_DIR, 'templates')
-STATIC_DIR = os.path.join(FRONTEND_DIR, 'static')
-
-# Initialize Flask app
-app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
+app = Flask(__name__)
 
 #CORS(app)
 CORS(app, resources={r"/*": {"origins": "https://docuinfo-frontend.vercel.app"}})
@@ -81,10 +73,9 @@ document_embeddings = []
 @app.route('/')
 def home():
     try:
-        return render_template('index.html')
+        return render_template('index.html')  # Looks for index.html in templates folder
     except Exception as e:
-        # Print error to logs and return an error message
-        print(f"Error rendering index.html: {e}")
+        print(f"Error rendering template: {e}")
         return f"Error: {e}", 500
 
 @app.route('/api/ask', methods=['POST'])
