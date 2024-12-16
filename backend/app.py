@@ -14,6 +14,7 @@ CORS(app, resources={r"/*": {"origins": "https://docuinfo-frontend.vercel.app"}}
 UPLOAD_FOLDER = '/tmp/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
 
 ALLOWED_EXTENSIONS = {'pdf', 'txt', 'doc', 'docx'}
 
@@ -143,17 +144,22 @@ Answer:
 
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
+    print("Incoming Headers:", request.headers)
+    print("Incoming Files:", request.files)
     if 'file' not in request.files:
+        print("No file part in the request.")
         return jsonify({'error': 'No file part'}), 400
 
     file = request.files['file']
     if file.filename == '':
+        print("No file selected.")
         return jsonify({'error': 'No selected file'}), 400
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
+        print(f"File saved successfully: {file_path}")
         try:
             global documents, document_embeddings  # Declare globals
             documents = read_pdf(file_path)
